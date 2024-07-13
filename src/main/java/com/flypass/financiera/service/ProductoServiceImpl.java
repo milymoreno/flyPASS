@@ -1,5 +1,6 @@
 package com.flypass.financiera.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -149,4 +150,36 @@ public class ProductoServiceImpl implements ProductoService {
             producto.setEstado(estadoActivo);
         }
     }
+
+    @Override
+    public Producto activarProducto(Long id) {
+        Producto producto = obtenerProductoPorId(id);
+        //validarSaldoParaActivacion(producto);
+        Estado estadoActivo = estadoService.getEstadoActivo();
+        producto.setEstado(estadoActivo);
+        return productoRepository.save(producto);
+    }
+
+    @Override
+    public Producto inactivarProducto(Long id) {
+        Producto producto = obtenerProductoPorId(id);
+        Estado estadoInactivo = estadoRepository.findByNombre("Inactivo")
+                .orElseThrow(() -> new IllegalArgumentException("Estado 'Inactivo' no encontrado."));
+        producto.setEstado(estadoInactivo);
+        return productoRepository.save(producto);
+    }
+
+    @Override
+    public void cancelarProducto(Long id) {
+        Producto producto = obtenerProductoPorId(id);
+        validarSaldoParaCancelacion(producto);
+        productoRepository.delete(producto);
+    }
+
+    private void validarSaldoParaCancelacion(Producto producto) {
+        if (producto.getSaldo().compareTo(BigDecimal.ZERO) != 0) {
+            throw new IllegalArgumentException("Solo se pueden cancelar cuentas con saldo igual a $0.");
+        }
+    }
+
 }

@@ -18,4 +18,8 @@ public interface ProductoService {
     
     //para consultar el estado de los productos o cuentas
     String consultarEstadoProducto(Long idProducto);
+
+    Producto activarProducto(Long id);
+    Producto inactivarProducto(Long id);
+    void cancelarProducto(Long id);
 }

@@ -15,6 +15,7 @@ public class Transaccion {
 
     private BigDecimal monto;
     private LocalDateTime fecha;
+    private TipoTransaccion tipo;
 
     @ManyToOne
     @JoinColumn(name = "id_producto_origen")
@@ -27,6 +28,9 @@ public class Transaccion {
     @ManyToOne
     @JoinColumn(name = "id_tipo_transaccion")
     private TipoTransaccion tipoTransaccion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cliente cliente;
 
     @PrePersist
     protected void onCreate() {

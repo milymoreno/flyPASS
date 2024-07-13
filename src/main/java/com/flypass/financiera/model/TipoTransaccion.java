@@ -14,4 +14,9 @@ public class TipoTransaccion {
     private Long id;
 
     private String nombre;
+
+    public String getNombre() {
+        return nombre;
+    }
+    
 }
