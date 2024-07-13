@@ -53,4 +53,20 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> obtenerTodosLosProductos() {
         return productoRepository.findAll();
     }
+
+    @Override
+    public String consultarEstadoProducto(Long idProducto) {
+        Optional<Producto> optionalProducto = productoRepository.findById(idProducto);
+        if (optionalProducto.isPresent()) {
+            Producto producto = optionalProducto.get();
+            Estado estado = producto.getEstado();
+            if (estado != null) {
+                return estado.getNombre(); // Suponiendo que 'nombre' es el atributo que contiene el nombre del estado
+            } else {
+                return "Estado no definido";
+            }
+        } else {
+            throw new IllegalArgumentException("Producto no encontrado.");
+        }
+    }
 }

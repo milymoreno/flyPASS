@@ -17,6 +17,11 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Cliente crearCliente(Cliente cliente) {
         // Implementación del método crearCliente
+        // Validación: Verificar si ya existe un cliente con el mismo tipo y número de identificación
+        Optional<Cliente> clienteExistente = clienteRepository.findByTipoIdentificacionAndNumeroIdentificacion(cliente.getTipoIdentificacion(), cliente.getNumeroIdentificacion());
+        if (clienteExistente.isPresent()) {
+            throw new IllegalArgumentException("Ya existe un cliente con el mismo tipo y número de identificación.");
+        }
         return clienteRepository.save(cliente);
     }
 
