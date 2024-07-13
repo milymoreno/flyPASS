@@ -32,5 +32,13 @@ public class Transaccion {
     protected void onCreate() {
         this.fecha = LocalDateTime.now();
     }
+
+    public Producto getProductoOrigen() {
+        return productoOrigen;
+    }
+
+    public Producto getProductoDestino() {
+        return productoDestino;
+    }
 }
 
