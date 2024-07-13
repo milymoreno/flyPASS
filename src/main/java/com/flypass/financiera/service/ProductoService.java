@@ -15,6 +15,7 @@ public interface ProductoService {
     Producto obtenerProductoPorId(Long id);
 
     List<Producto> obtenerTodosLosProductos();
+    
     //para consultar el estado de los productos o cuentas
     String consultarEstadoProducto(Long idProducto);
 }

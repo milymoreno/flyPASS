@@ -20,28 +20,34 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String tipoCuenta;
-    private String numeroCuenta;
-    private BigDecimal saldo;
-    private Boolean exentaGMF;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaModificacion;
+    @ManyToOne
+    @JoinColumn(name = "id_tipo_producto", nullable = false)
+    private TipoProducto tipoProducto;
 
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
     @ManyToOne
     @JoinColumn(name = "id_estado")
     private Estado estado;
 
+    private String numeroCuenta;
+    private BigDecimal saldo;
+    private Boolean exentaGMF;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaModificacion;
+
+    
+    
+
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
-        if (this.tipoCuenta.equals("Ahorros")) {
+        if (this.tipoProducto.getNombre().equalsIgnoreCase("Ahorros")) {
             // Asigna el estado por defecto 'Activa'
             Estado estadoActiva = new Estado();
-            estadoActiva.setId(1L); // Asegúrate de que el estado con ID 1 es 'Activa'
+            estadoActiva.setId(1L); // Asegúrar que el estado con ID 1 es 'Activa'
             this.estado = estadoActiva;
         }
     }
