@@ -77,5 +77,9 @@ public class Cliente {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
+
+    // Constructor vacío (necesario para JPA)
+    public Cliente() {
+    }
 }
 

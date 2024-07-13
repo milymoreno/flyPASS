@@ -32,6 +32,10 @@ public class Transaccion {
     @ManyToOne(fetch = FetchType.LAZY)
     private Cliente cliente;
 
+
+    // Constructor vacío (necesario para JPA)
+    public Transaccion() {
+    }
     @PrePersist
     protected void onCreate() {
         this.fecha = LocalDateTime.now();
