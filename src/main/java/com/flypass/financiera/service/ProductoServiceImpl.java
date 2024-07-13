@@ -1,19 +1,20 @@
 package com.flypass.financiera.service;
 
-import com.flypass.financiera.model.Cliente;
-import com.flypass.financiera.model.Estado;
-import com.flypass.financiera.model.Producto;
-import com.flypass.financiera.model.TipoProducto;
-import com.flypass.financiera.repository.EstadoRepository;
-import com.flypass.financiera.repository.ProductoRepository;
-import com.flypass.financiera.repository.TipoProductoRepository;
-import com.flypass.financiera.repository.ClienteRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.flypass.financiera.model.Cliente;
+import com.flypass.financiera.model.Estado;
+import com.flypass.financiera.model.Producto;
+import com.flypass.financiera.model.TipoProducto;
+import com.flypass.financiera.repository.ClienteRepository;
+import com.flypass.financiera.repository.EstadoRepository;
+import com.flypass.financiera.repository.ProductoRepository;
+import com.flypass.financiera.repository.TipoProductoRepository;
 
 @Service
 public class ProductoServiceImpl implements ProductoService {
@@ -30,51 +31,54 @@ public class ProductoServiceImpl implements ProductoService {
     @Autowired
     private TipoProductoRepository tipoProductoRepository;
 
+    @Autowired
+    private EstadoService estadoService;
+
     @Override
     public Producto crearProducto(Producto producto) {
-
-        if (producto.getCliente() == null || producto.getCliente().getId() == null) {
-            throw new IllegalArgumentException("El producto debe estar vinculado a un cliente.");
-        }
-
-        TipoProducto tipoProducto = tipoProductoRepository.findById(producto.getTipoProducto().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Tipo de producto no encontrado."));
-
-        if (!tipoProducto.getNombre().equals("Corriente") && !tipoProducto.getNombre().equals("Ahorro")) {
-            throw new IllegalArgumentException("Solo se permiten productos de tipo 'cuenta corriente' o 'cuenta de ahorros'.");
-        }
-
-        if (producto.getEstado() == null || producto.getEstado().getId() == null) {
-            throw new IllegalArgumentException("El producto debe tener un Estado");
-        }
-
-        Estado estado = estadoRepository.findById(producto.getEstado().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Estado no encontrado."));
-        producto.setEstado(estado);
-
-        if (!estado.getNombre().equals("Activo") && !estado.getNombre().equals("Inactiva") && !estado.getNombre().equals("Cancelada")) {
-            throw new IllegalArgumentException("Solo se permiten estados 'Activo', 'Inactivo' o 'Cancelado'.");
-        }
-
-        //validarTipoProducto(producto);
+        
         validarClienteAsociado(producto);
+        validarTipoProducto(producto);        
+        validarEstado(producto);        
+        asignarNumeroCuenta(producto);
+        asignarEstadoPorDefecto(producto);
+        producto.setSaldo(producto.getSaldo());
+        producto.setExentaGMF(producto.getExentaGMF());
 
         return productoRepository.save(producto);
     }
 
-    /*private void validarTipoProducto(Producto producto) {
-        TipoProducto tipoProducto = producto.getTipoProducto();
-        // Verificar que el tipo de transacción sea cuenta corriente o cuenta de ahorros
-        if (!tipoTransaccion.getNombre().equalsIgnoreCase("cuenta corriente") &&
-            !tipoTransaccion.getNombre().equalsIgnoreCase("cuenta de ahorros")) {
+    private void validarTipoProducto(Producto producto) {
+        TipoProducto tipoProducto = tipoProductoRepository.findById(producto.getTipoProducto().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de producto no encontrado."));
+        // Verificar que el tipo de producto sea cuenta corriente o cuenta de ahorros
+        if (!tipoProducto.getNombre().equalsIgnoreCase("Corriente") &&
+            !tipoProducto.getNombre().equalsIgnoreCase("Ahorros")) {
             throw new IllegalArgumentException("El tipo de producto debe ser 'cuenta corriente' o 'cuenta de ahorros'.");
         }
-    }*/
+        producto.setTipoProducto(tipoProducto);
+    }
+
+    private void validarEstado(Producto producto) {
+        if (producto.getEstado() == null || producto.getEstado().getId() == null) {
+            throw new IllegalArgumentException("El producto debe tener un Estado");        }
+
+        Estado estado = estadoRepository.findById(producto.getEstado().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Estado no encontrado."));
+        // Verificar que los estados sean los correctos
+        if (!estado.getNombre().equalsIgnoreCase("Activo") &&
+            !estado.getNombre().equalsIgnoreCase("Inactiva") && 
+            !estado.getNombre().equalsIgnoreCase("Cancelada")) {
+            throw new IllegalArgumentException("Solo se permiten estados 'Activo', 'Inactivo' o 'Cancelado'.");
+        }
+        producto.setEstado(estado);
+    }
 
     private void validarClienteAsociado(Producto producto) {
         Cliente cliente = producto.getCliente();
-        if (cliente == null || cliente.getId() == null) {
-            throw new IllegalArgumentException("El producto debe estar asociado a un cliente.");
+        
+        if (producto.getCliente() == null || producto.getCliente().getId() == null) {
+            throw new IllegalArgumentException("El producto debe estar vinculado a un cliente.");
         }
         // Verificar si el cliente existe en la base de datos
         Cliente clienteExistente = clienteRepository.findById(cliente.getId())
@@ -87,18 +91,13 @@ public class ProductoServiceImpl implements ProductoService {
     public Producto actualizarProducto(Long id, Producto productoDetalles) {
         Producto producto = obtenerProductoPorId(id);
 
-        TipoProducto tipoProducto = tipoProductoRepository.findById(productoDetalles.getTipoProducto().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Tipo de producto no encontrado."));
-
-        if (!tipoProducto.getNombre().equals("cuenta corriente") && !tipoProducto.getNombre().equals("cuenta de ahorros")) {
-            throw new IllegalArgumentException("Solo se permiten productos de tipo 'cuenta corriente' o 'cuenta de ahorros'.");
-        }
-
-        producto.setTipoProducto(tipoProducto);
-        producto.setSaldo(productoDetalles.getSaldo());
-        producto.setEstado(productoDetalles.getEstado());
-        //validarTipoProducto(productoDetalles);
         validarClienteAsociado(productoDetalles);
+        validarTipoProducto(productoDetalles);        
+        validarEstado(productoDetalles);  
+
+        producto.setSaldo(productoDetalles.getSaldo());
+        producto.setExentaGMF(productoDetalles.getExentaGMF());       
+                
         return productoRepository.save(producto);
     }
 
@@ -134,6 +133,20 @@ public class ProductoServiceImpl implements ProductoService {
             }
         } else {
             throw new IllegalArgumentException("Producto no encontrado.");
+        }
+    }
+
+    private void asignarNumeroCuenta(Producto producto) {
+        Random random = new Random();
+        String prefijo = producto.getTipoProducto().getNombre().equalsIgnoreCase("Ahorros") ? "53" : "33";
+        String numeroCuenta = prefijo + String.format("%08d", random.nextInt(100000000));
+        producto.setNumeroCuenta(numeroCuenta);
+    }
+
+    private void asignarEstadoPorDefecto(Producto producto) {
+        if (producto.getTipoProducto().getNombre().equalsIgnoreCase("Ahorros")) {
+            Estado estadoActivo = estadoService.getEstadoActivo();
+            producto.setEstado(estadoActivo);
         }
     }
 }

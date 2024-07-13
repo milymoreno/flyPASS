@@ -37,19 +37,12 @@ public class Producto {
     private Boolean exentaGMF;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
-
-    
     
 
-    @PrePersist
+   @PrePersist
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
-        if (this.tipoProducto.getNombre().equalsIgnoreCase("Ahorros")) {
-            // Asigna el estado por defecto 'Activa'
-            Estado estadoActiva = new Estado();
-            estadoActiva.setId(1L); // Asegúrar que el estado con ID 1 es 'Activa'
-            this.estado = estadoActiva;
-        }
+       
     }
 
     @PreUpdate
