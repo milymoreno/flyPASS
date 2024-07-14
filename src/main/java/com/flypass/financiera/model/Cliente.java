@@ -1,9 +1,20 @@
 package com.flypass.financiera.model;
 
+
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.Pattern;
+//import java.util.Set;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.flypass.financiera.validation.UniqueCliente;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,17 +22,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.CascadeType;
 import lombok.Data;
-
-import org.hibernate.validator.constraints.Length;
-
-import com.flypass.financiera.validation.UniqueCliente;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-//import javax.validation.constraints.Pattern;
-//import java.util.Set;
 
 @Entity
 @Data

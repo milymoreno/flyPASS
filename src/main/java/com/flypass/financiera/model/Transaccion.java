@@ -1,10 +1,16 @@
 package com.flypass.financiera.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import lombok.Data;
 
 @Entity
 @Data
@@ -14,8 +20,7 @@ public class Transaccion {
     private Long id;
 
     private BigDecimal monto;
-    private LocalDateTime fecha;
- 
+    private LocalDateTime fecha;  
 
     @ManyToOne
     @JoinColumn(name = "id_producto_origen")
