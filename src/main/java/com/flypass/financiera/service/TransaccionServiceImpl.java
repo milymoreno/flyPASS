@@ -11,16 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 public class TransaccionServiceImpl implements TransaccionService {
 
     @Autowired
     private TransaccionRepository transaccionRepository;
-
-    /*@Autowired
-    private ClienteRepository clienteRepository;
-    */
 
     @Autowired
     private TipoTransaccionRepository tipoTransaccionRepository;
@@ -32,23 +29,38 @@ public class TransaccionServiceImpl implements TransaccionService {
     @Override
     public Transaccion crearTransaccion(Transaccion transaccion) {
         validarTipoTransaccion(transaccion);
-        validarProductos(transaccion);        
+        validarProductos(transaccion);
+        
+                
         return transaccionRepository.save(transaccion);
     }
 
     private void validarProductos(Transaccion transaccion) {        
         //Validar producto origen
-        Producto productoOrigen = productoRepository.findById(transaccion.getProductoOrigen().getId())
+        Producto productoDestino = productoRepository.findById(transaccion.getProductoOrigen().getId())
             .orElseThrow(() -> new IllegalArgumentException("El número del producto origen no fue encontrado"));
-        transaccion.setProductoOrigen(productoOrigen);
-
-         // Validar producto destino solo cuando es transferencia
-         if (transaccion.getTipoTransaccion().getNombre().equalsIgnoreCase("Transferencia")) {
-            Producto productoDestino = productoRepository.findById(transaccion.getProductoDestino().getId())
+       
+        // Validar producto origen solo cuando es transferencia
+        if (transaccion.getTipoTransaccion().getNombre().equalsIgnoreCase("Transferencia")) {
+            Producto productoOrigen = productoRepository.findById(transaccion.getProductoDestino().getId())
                 .orElseThrow(() -> new IllegalArgumentException("El número del producto destino no fue encontrado"));
-            transaccion.setProductoDestino(productoDestino);
+            //Verificar saldo Origen
+            if (productoOrigen.getSaldo().compareTo(transaccion.getMonto()) < 0) {
+                throw new IllegalArgumentException("Saldo insuficiente para realizar la transferencia");
+            }
+            BigDecimal nuevoSaldo = productoOrigen.getSaldo().subtract(transaccion.getMonto());
+            // Actualizar Saldo en origen
+            productoOrigen.setSaldo(nuevoSaldo);            
+            productoRepository.save(productoOrigen);
+            transaccion.setProductoOrigen(productoOrigen);
+
         }
-                    
+        
+        //Actualizar saldo en destino
+        BigDecimal nuevoSaldo = productoDestino.getSaldo().add(transaccion.getMonto());
+        productoDestino.setSaldo(nuevoSaldo);
+        productoRepository.save(productoDestino);
+        transaccion.setProductoDestino(productoDestino);
 
     }
 
@@ -68,9 +80,6 @@ public class TransaccionServiceImpl implements TransaccionService {
     public List<Transaccion> obtenerTodasLasTransacciones() {
         return transaccionRepository.findAll();
     }
-
-    
-
 
 }
 
