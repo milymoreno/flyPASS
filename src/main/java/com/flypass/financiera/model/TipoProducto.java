@@ -19,24 +19,6 @@ public class TipoProducto {
     public TipoProducto() {
     }
 
-    
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     // Método toString() para imprimir los objetos de esta clase
     @Override
     public String toString() {

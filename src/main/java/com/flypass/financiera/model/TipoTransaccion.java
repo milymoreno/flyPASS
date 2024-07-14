@@ -1,5 +1,4 @@
 package com.flypass.financiera.model;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,31 +18,9 @@ public class TipoTransaccion {
     public TipoTransaccion() {
     }
 
-    public TipoTransaccion(String nombre) {
-        this.nombre = nombre;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     // Método toString() para imprimir los objetos de esta clase
     @Override
     public String toString() {
-        return "TipoTransaccion [id=" + id + ", nombre=" + nombre + "]";
+        return "TipoProducto [id=" + id + ", nombre=" + nombre + "]";
     }
-    
 }
