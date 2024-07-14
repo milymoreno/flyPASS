@@ -79,8 +79,5 @@ public class Cliente {
         this.productos = productos;
     }
 
-    // Constructor vacío (necesario para JPA)
-    public Cliente() {
-    }
 }
 

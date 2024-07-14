@@ -1,4 +1,4 @@
 FROM openjdk:17
-ADD target/apidocker-0.0.1.jar target/apidocker-0.0.1.jar
-EXPOSE 8082
-ENTRYPOINT ["java", "-jar", "target/apidocker-0.0.1.jar"]
+ADD target/ApiFinanciera-0.0.1.jar target/ApiFinanciera-0.0.1.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "target/ApiFinanciera-0.0.1.jar"]

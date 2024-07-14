@@ -50,8 +50,5 @@ public class Producto {
         this.fechaModificacion = LocalDateTime.now();
     }
 
-    // Constructor vacío (necesario para JPA)
-    public Producto() {
-    }
 }
 
