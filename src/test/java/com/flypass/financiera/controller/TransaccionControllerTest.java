@@ -1,47 +1,70 @@
 package com.flypass.financiera.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.flypass.financiera.model.Transaccion;
 import com.flypass.financiera.service.TransaccionService;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.math.BigDecimal;
-
-
-@ExtendWith(MockitoExtension.class)
-@WebMvcTest(TransaccionController.class)
 public class TransaccionControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private TransaccionService transaccionService;
 
+    @InjectMocks
+    private TransaccionController transaccionController;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    public void testCrearTransaccion() throws Exception {
+    public void testCrearTransaccion() {
+        // Mock data
         Transaccion transaccion = new Transaccion();
-        transaccion.setMonto(new BigDecimal("1000"));
+        transaccion.setId(1L);
+        transaccion.setMonto(BigDecimal.valueOf(100.0));
+        transaccion.setFecha(LocalDateTime.now());
 
-        when(transaccionService.crearTransaccion(transaccion)).thenReturn(transaccion);
+        when(transaccionService.crearTransaccion(any(Transaccion.class))).thenReturn(transaccion);
 
-        mockMvc.perform(post("/transacciones")
-                .contentType("application/json")
-                .content("{\"monto\":1000}"))
-                .andExpect(status().isOk());
+        // Test
+        ResponseEntity<Transaccion> responseEntity = transaccionController.crearTransaccion(transaccion);
+
+        // Verification
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(transaccion, responseEntity.getBody());
+    }
+
+    @Test
+    public void testObtenerTodasLasTransacciones() {
+        // Mock data
+        List<Transaccion> transacciones = new ArrayList<>();
+        transacciones.add(new Transaccion());
+        transacciones.add(new Transaccion());
+
+        when(transaccionService.obtenerTodasLasTransacciones()).thenReturn(transacciones);
+
+        // Test
+        ResponseEntity<List<Transaccion>> responseEntity = transaccionController.obtenerTodasLasTransacciones();
+
+        // Verification
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(transacciones, responseEntity.getBody());
     }
 }
-

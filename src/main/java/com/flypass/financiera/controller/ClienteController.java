@@ -38,7 +38,7 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteDetalles) {
-        logger.info("Se ha Actualizado un Cliente con el metodo PUT al endpoint /clientes/{id}");
+        logger.info("Se ha Actualizado un Cliente con el metodo PUT al endpoint /clientes/");
         Cliente clienteActualizado = clienteService.actualizarCliente(id, clienteDetalles);
         return ResponseEntity.ok(clienteActualizado);
     }
