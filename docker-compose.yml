@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  financiera:
+    build:
+      context: ./financiera
+      dockerfile: Dockerfile
+    container_name: financiera
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3307/producto_financiero
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=     
+    depends_on:
+      - db      
+    ports:
+      - "8081:8081"
+    networks:
+      - my-network  
+
+  db:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: mysql_db
+    environment:     
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'YES'
+      MYSQL_RANDOM_ROOT_PASSWORD: 'NO'
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    volumes:
+      - db_datos:/var/lib/mysql
+      - ./mysql/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./mysql/producto_financiero.sql:/docker-entrypoint-initdb.d/producto_financiero.sql      
+    ports:
+      - "3307:3307"
+    networks:
+      - my-network 
+  
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  db_datos:
+  
+
+
