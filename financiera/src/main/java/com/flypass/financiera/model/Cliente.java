@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 //import javax.validation.constraints.Pattern;
 //import java.util.Set;
 

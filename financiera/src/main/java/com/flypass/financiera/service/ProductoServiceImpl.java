@@ -141,7 +141,7 @@ public class ProductoServiceImpl implements ProductoService {
     private void asignarNumeroCuenta(Producto producto) {
         Random random = new Random();
         String prefijo = producto.getTipoProducto().getNombre().equalsIgnoreCase("Ahorros") ? "53" : "33";
-        String numeroCuenta = prefijo + String.format("%08d", random.nextInt(100000000));
+        String numeroCuenta = prefijo + "%08d".formatted(random.nextInt(100000000));
         producto.setNumeroCuenta(numeroCuenta);
     }
 
