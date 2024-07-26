@@ -140,23 +140,23 @@ public class TransaccionServiceImplTest {
     
     @Test
     public void testCrearTransaccionProductoDestinoNoEncontrado() {    
-    when(tipoTransaccionRepository.findByNombre(anyString())).thenReturn(Optional.of(tipoTransaccion));
-    when(productoRepository.findById(transaccion.getProductoDestino().getId())).thenReturn(Optional.empty());
+        when(tipoTransaccionRepository.findByNombre(anyString())).thenReturn(Optional.of(tipoTransaccion));
+        when(productoRepository.findById(transaccion.getProductoDestino().getId())).thenReturn(Optional.empty());
 
-    // Llama al método que se va a probar
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-        transaccionService.crearTransaccion(transaccion);
-    });
+        // Llama al método que se va a probar
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            transaccionService.crearTransaccion(transaccion);
+        });
 
-    // Verifica el mensaje de la excepción
-    assertEquals("El número del producto destino no fue encontrado", exception.getMessage());
+        // Verifica el mensaje de la excepción
+        assertEquals("El número del producto destino no fue encontrado", exception.getMessage());
 
-    // Verifica que los métodos de los repositorios se llamaron correctamente
-    verify(tipoTransaccionRepository).findByNombre(anyString());
-    verify(productoRepository).findById(transaccion.getProductoDestino().getId());    
-    verify(productoRepository, never()).save(any(Producto.class)); // Asegúrate de que no se guarda ningún producto
-    verify(transaccionRepository, never()).save(any(Transaccion.class)); // Asegúrate de que no se guarda ninguna transacción
-}
+        // Verifica que los métodos de los repositorios se llamaron correctamente
+        verify(tipoTransaccionRepository).findByNombre(anyString());
+        verify(productoRepository).findById(transaccion.getProductoDestino().getId());    
+        verify(productoRepository, never()).save(any(Producto.class)); // Asegúrate de que no se guarda ningún producto
+        verify(transaccionRepository, never()).save(any(Transaccion.class)); // Asegúrate de que no se guarda ninguna transacción
+    }
 
     @Test
     public void testObtenerTodasLasTransacciones() {
