@@ -114,7 +114,8 @@ public class ProductoServiceImpl implements ProductoService {
         if (optionalProducto.isEmpty()) {
             throw new IllegalArgumentException("Producto no encontrado.");
         }
-        return optionalProducto.get();}
+        return optionalProducto.get();
+    }
 
     @Override
     public List<Producto> obtenerTodosLosProductos() {

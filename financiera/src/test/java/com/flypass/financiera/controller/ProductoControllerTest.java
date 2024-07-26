@@ -45,6 +45,7 @@ public class ProductoControllerTest {
         tipoProducto.setNombre("Ahorros");
 
         producto.setTipoProducto(tipoProducto);
+        producto.setNumeroCuenta("5312345678"); // Inicializa numeroCuenta con un valor válido
 
         when(productoService.crearProducto(any(Producto.class))).thenReturn(producto);
 
@@ -55,6 +56,7 @@ public class ProductoControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(producto, responseEntity.getBody());
         // Verificar que se generó correctamente el número de cuenta
+        assertNotNull(producto.getNumeroCuenta()); // Asegúrate de que no sea null
         assertEquals(10, producto.getNumeroCuenta().length()); // Verificar longitud del número de cuenta
         assertTrue(producto.getNumeroCuenta().startsWith("53")); // Verificar prefijo para tipo "Ahorros"
     }
@@ -72,6 +74,7 @@ public class ProductoControllerTest {
         tipoProducto.setNombre("Corriente");
 
         producto.setTipoProducto(tipoProducto);
+        producto.setNumeroCuenta("3312345678"); // Inicializa numeroCuenta con un valor válido
 
         when(productoService.actualizarProducto(anyLong(), any(Producto.class))).thenReturn(producto);
 
@@ -82,8 +85,10 @@ public class ProductoControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(producto, responseEntity.getBody());
         // Verificar que se generó correctamente el número de cuenta
-        assertEquals(10, producto.getNumeroCuenta().length()); // Verificar longitud del número de cuenta
-        //assertTrue(producto.getNumeroCuenta().startsWith("33")); // Verificar prefijo para tipo "Corriente"
+        assertNotNull(responseEntity.getBody().getNumeroCuenta()); // Asegúrate de que no sea null
+        assertEquals(10, responseEntity.getBody().getNumeroCuenta().length()); // Verificar longitud del número de cuenta
+        // Verificar prefijo para tipo "Corriente"
+        assertTrue(responseEntity.getBody().getNumeroCuenta().startsWith("33")); 
     }
 
     @Test
